@@ -71,7 +71,6 @@ class cifar10(Dataset):
     img = torch.from_numpy(self.images[idx]).float()
 
     if self.train:
-
         # Random horizontal flip
         if torch.rand(1).item() < 0.5:
             img = torch.flip(img, dims=[2])
@@ -83,19 +82,6 @@ class cifar10(Dataset):
         left = torch.randint(0, 9, ()).item()
 
         img = img[:, top:top + 32, left:left + 32]
-
-        # Random rotation
-        angle = float(torch.empty(1).uniform_(-15, 15))
-        img = TF.rotate(img, angle)
-
-        # Random brightness
-        brightness = float(torch.empty(1).uniform_(0.8, 1.2))
-        img = torch.clamp(img * brightness, 0.0, 1.0)
-
-        # Random contrast
-        contrast = float(torch.empty(1).uniform_(0.8, 1.2))
-        mean = img.mean(dim=(1, 2), keepdim=True)
-        img = torch.clamp((img - mean) * contrast + mean, 0.0, 1.0)
 
     img = F.interpolate(
         img.unsqueeze(0),
