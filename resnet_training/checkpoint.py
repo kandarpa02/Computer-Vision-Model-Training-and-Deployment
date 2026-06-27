@@ -34,6 +34,7 @@ class Checkpoint:
   last_epoch:int|None
   param_state:OrderedDict|None
   opt_state:dict|None
+  scheduler_state:dict|None
   scalar_state:dict|None
 
   def update(self, **kwargs):
@@ -45,6 +46,7 @@ class Checkpoint:
       "last_epoch": self.last_epoch,
       "param_state": self.param_state,
       "opt_state": self.opt_state,
+      "scheduler_state": self.scheduler_state,
       "scalar_state": self.scalar_state,
     }
 

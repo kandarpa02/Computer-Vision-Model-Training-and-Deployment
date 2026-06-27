@@ -20,8 +20,8 @@ def cifar_download():
   if not os.path.exists(FILEPATH):
     gdown.download(URL, output=FILEPATH, quiet=False)
 
-IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
-IMAGENET_STD  = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
+MEAN = torch.tensor([0.49139968, 0.48215827, 0.44653124]).view(3, 1, 1)
+STD  = torch.tensor([0.24703233, 0.24348505, 0.26158768]).view(3, 1, 1)
 
 class cifar10(Dataset):
   """
@@ -71,7 +71,7 @@ class cifar10(Dataset):
 
   def __getitem__(self, idx):
 
-    img = torch.from_numpy(self.images[idx]).float() / 255.0
+    img = torch.from_numpy(self.images[idx]).float()
 
     if self.train:
         # Random horizontal flip
@@ -86,14 +86,7 @@ class cifar10(Dataset):
 
         img = img[:, top:top + 32, left:left + 32]
 
-    img = F.interpolate(
-        img.unsqueeze(0),
-        size=(224, 224),
-        mode="bilinear",
-        align_corners=False
-    ).squeeze(0)
-
-    img = (img - IMAGENET_MEAN) / IMAGENET_STD
+    img = (img - MEAN) / STD
 
     label = torch.tensor(self.labels[idx], dtype=torch.long)
 
