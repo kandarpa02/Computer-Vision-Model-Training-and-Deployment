@@ -50,7 +50,7 @@ test_tf = transforms.Compose([
 ])
 
 
-class CIFAR10(Dataset):
+class cifar10(Dataset):
     def __init__(self, split=(80,), part=0, train=True):
         self.train = train
         cifar_download()
