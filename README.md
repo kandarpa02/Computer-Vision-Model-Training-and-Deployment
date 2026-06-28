@@ -10,7 +10,7 @@ This project is designed for **small research labs and early-stage startups** th
 
 It intentionally avoids high-level abstractions and distributed complexity.
 
-[plot](media/output.png)
+![plot](media/output.png)
 
 ---
 
