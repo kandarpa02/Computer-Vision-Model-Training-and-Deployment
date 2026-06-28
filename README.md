@@ -1,4 +1,4 @@
-# ResNet Training (PyTorch)
+# Computer-Vision-Model-Training-and-Deployment
 
 A **minimal, production-oriented PyTorch training core** focused on **correctness, resume-safe checkpointing, and performance**, demonstrated using **ResNet-18 on CIFAR-10**.
 
