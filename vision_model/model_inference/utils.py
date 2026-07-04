@@ -1,4 +1,5 @@
 from ..train.resnet18 import ResNet18
+from ..train.data import test_tf
 import os
 import gdown
 import torch
@@ -19,6 +20,7 @@ def model_initiate(device):
 
     def predict(img):
         with torch.no_grad():
+            img = test_tf(img)
             if img.ndim == 3:
                 img = img.unsqueeze(0)
             logits = model(img.to(device))
