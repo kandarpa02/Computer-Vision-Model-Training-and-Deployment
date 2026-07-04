@@ -19,6 +19,8 @@ def model_initiate(device):
 
     def predict(img):
         with torch.no_grad():
+            if img.ndim == 3:
+                img = img.unsqueeze(0)
             logits = model(img.to(device))
             return torch.argmax(logits, dim=1)
 

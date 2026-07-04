@@ -206,5 +206,4 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-.pt
-.pth
+resnet18_cifar10.pt
