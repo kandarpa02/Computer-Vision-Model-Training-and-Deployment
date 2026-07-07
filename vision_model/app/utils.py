@@ -18,12 +18,12 @@ def model_initiate(device):
 
     model.eval()
 
-    def predict(img):
+    def predict(img, batched=False):
         with torch.no_grad():
             img = test_tf(img)
-            if img.ndim == 3:
+            if not batched:
                 img = img.unsqueeze(0)
             logits = model(img.to(device))
-            return torch.argmax(logits, dim=1)
+            return torch.argmax(logits, dim=-1)
 
-    return predict
+    return predict 

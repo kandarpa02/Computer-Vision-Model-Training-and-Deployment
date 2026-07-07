@@ -28,11 +28,6 @@ STD  = [0.2470, 0.2435, 0.2616]
 # TRAIN TRANSFORMS (DeiT style)
 # -----------------------------
 train_tf = transforms.Compose([
-    transforms.ToPILImage(),
-
-    # transforms.RandomResizedCrop(32, scale=(0.6, 1.0)),
-    # transforms.RandomHorizontalFlip(),
-
     transforms.RandAugment(num_ops=2, magnitude=9),
 
     transforms.ToTensor(),
@@ -44,7 +39,6 @@ train_tf = transforms.Compose([
 # TEST TRANSFORMS
 # -----------------------------
 test_tf = transforms.Compose([
-    transforms.ToPILImage(),
     transforms.ToTensor(),
     transforms.Normalize(MEAN, STD),
 ])

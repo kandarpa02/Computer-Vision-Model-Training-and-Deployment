@@ -3,5 +3,6 @@ torchvision
 numpy
 pyyaml
 timm
-flask
+fastapi
 gdown
+streamlit
