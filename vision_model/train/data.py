@@ -16,7 +16,7 @@ def cifar_download():
     os.makedirs(CACHE_DIR, exist_ok=True)
 
     if not os.path.exists(FILEPATH):
-        gdown.download(URL, FILEPATH, quiet=False)
+        gdown.download(URL, FILEPATH, quiet=False, fuzzy=True)
 
 
 MEAN = (0.4914, 0.4822, 0.4465)
