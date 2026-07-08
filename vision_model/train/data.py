@@ -6,7 +6,7 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 
 
-URL = "https://drive.google.com/uc?id=1vqX5FKh7bmvxWL0CYjdo2xJFJ4mx3aqd"
+URL = "https://drive.google.com/file/d/1KHcr-IN6q_YP-8DNpq3Xm6Ga08mpdIVh/view?usp=drive_link"
 
 CACHE_DIR = os.path.expanduser("~/.cache/cifar10")
 FILEPATH = os.path.join(CACHE_DIR, "cifar10.npz")
@@ -59,9 +59,11 @@ class cifar10(Dataset):
         return len(self.images)
 
     def __getitem__(self, idx):
-        img = torch.from_numpy(self.images[idx]).float()
-
-        # CHW, float32, 0-255  ->  CHW, float32, 0-1
+        img = (
+            torch.from_numpy(self.images[idx])
+            .permute(2, 0, 1)
+            .float()
+        )
         img /= 255.0
 
         assert img.shape == (3, 32, 32), f"Bad shape: {img.shape}"
