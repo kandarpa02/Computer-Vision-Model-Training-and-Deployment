@@ -6,7 +6,7 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 
 
-URL = "https://drive.google.com/file/d/1KHcr-IN6q_YP-8DNpq3Xm6Ga08mpdIVh/view?usp=drive_link"
+URL = "https://drive.google.com/file/d/1KHcr-IN6q_YP-8DNpq3Xm6Ga08mpdIVh/view?usp=sharing"
 
 CACHE_DIR = os.path.expanduser("~/.cache/cifar10")
 FILEPATH = os.path.join(CACHE_DIR, "cifar10.npz")
