@@ -24,13 +24,13 @@ STD  = (0.2470, 0.2435, 0.2616)
 
 
 train_tf = transforms.Compose([
-    transforms.ToPilImage(),
+    transforms.ToPILImage(),
     transforms.RandAugment(num_ops=2, magnitude=9),
     transforms.Normalize(MEAN, STD),
 ])
 
 test_tf = transforms.Compose([
-    transforms.ToPilImage(),
+    transforms.ToPILImage(),
     transforms.Normalize(MEAN, STD),
 ])
 
