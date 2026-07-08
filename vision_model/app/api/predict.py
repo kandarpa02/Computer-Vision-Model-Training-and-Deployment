@@ -4,18 +4,28 @@ import os
 import gdown
 import torch
 import time
+import zipfile
 
-URL = "https://drive.google.com/file/d/1fVEDSBNC-JGH9fFN8Wh6LDb8hmALtkP3/view?usp=drive_link"
+URL = "https://drive.google.com/file/d/1bHZGVngZpKAQ5TFc0vsz8y5Xm2RQPuJ-/view?usp=sharing"
 
 MODEL_CACHE = os.path.expanduser("~/.cache/cifar10")
-FILEPATH = os.path.join(MODEL_CACHE, "resnet18_cifar10.pt")
+
+ZIP_PATH = os.path.join(MODEL_CACHE, "ckpt183.zip")
+PT_PATH = os.path.join(MODEL_CACHE, "ckpt183.pt")
 
 def model_download():
     os.makedirs(MODEL_CACHE, exist_ok=True)
 
-    if not os.path.exists(FILEPATH):
-        gdown.download(URL, FILEPATH, quiet=False)
+    # Download only if the extracted checkpoint doesn't already exist
+    if not os.path.exists(PT_PATH):
+        gdown.download(URL, ZIP_PATH, quiet=False)
 
+        with zipfile.ZipFile(ZIP_PATH, "r") as z:
+            z.extractall(MODEL_CACHE)
+
+        os.remove(ZIP_PATH)
+
+    return PT_PATH
 
 MEAN = (0.4914, 0.4822, 0.4465)
 STD  = (0.2470, 0.2435, 0.2616)
@@ -29,17 +39,22 @@ def model_initiate(device):
     model_download()
     model = ResNet18().to(device)
 
-    checkpoint = torch.load(FILEPATH, map_location=device)
+    checkpoint = torch.load(PT_PATH, map_location=device)
     model.load_state_dict(checkpoint["param_state"])
-
     model.eval()
 
-    def predict(img, batched=False):
+    def predict(images):
         with torch.no_grad():
-            img = normalize(img)
-            if not batched:
-                img = img.unsqueeze(0)
-            logits = model(img.to(device))
+
+            # Single image
+            if not isinstance(images, list):
+                images = [images]
+
+            batch = torch.stack([
+                normalize(img) for img in images
+            ]).to(device)
+
+            logits = model(batch)
             return logits
 
-    return predict 
+    return predict

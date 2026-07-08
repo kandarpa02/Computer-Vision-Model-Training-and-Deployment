@@ -33,3 +33,25 @@ async def predict(file: UploadFile = File(...)):
         "latency_ms": (t2 - t1) * 1000
     } 
 
+@app.post("/predict_batch")
+async def predict_batch(files: list[UploadFile] = File(...)):
+    images = [
+        Image.open(io.BytesIO(await f.read())).convert("RGB")
+        for f in files
+    ]
+
+    logits = model(images)
+
+    probs = torch.softmax(logits, dim=1)
+    confidences, pred_indices = torch.max(probs, dim=1)
+
+    return {
+        "predictions": [
+            {
+                "filename": f.filename,
+                "prediction": class_names[idx.item()],
+                "confidence": conf.item(),
+            }
+            for f, idx, conf in zip(files, pred_indices, confidences)
+        ]
+    }
