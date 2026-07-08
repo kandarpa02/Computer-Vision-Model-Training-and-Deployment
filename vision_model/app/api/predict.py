@@ -1,15 +1,45 @@
-from fastapi import FastAPI, UploadFile, File
-from utils import model_initiate
+from ...train.resnet18 import ResNet18
+from torchvision import transforms
+import os
+import gdown
 import torch
-from PIL import Image
-import io
+import time
 
-app = FastAPI()
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = model_initiate(device)
+URL = "https://drive.google.com/file/d/1fVEDSBNC-JGH9fFN8Wh6LDb8hmALtkP3/view?usp=drive_link"
 
-@app.post("/predict")
-async def predict(file: UploadFile = File(...)):
-    img = Image.open(io.BytesIO(await file.read())).convert("RGB")
-    pred = model(img)
-    return {"prediction": int(pred.item())}
+MODEL_CACHE = os.path.expanduser("~/.cache/cifar10")
+FILEPATH = os.path.join(MODEL_CACHE, "resnet18_cifar10.pt")
+
+def model_download():
+    os.makedirs(MODEL_CACHE, exist_ok=True)
+
+    if not os.path.exists(FILEPATH):
+        gdown.download(URL, FILEPATH, quiet=False)
+
+
+MEAN = (0.4914, 0.4822, 0.4465)
+STD  = (0.2470, 0.2435, 0.2616)
+
+normalize = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize(MEAN, STD),
+])
+
+def model_initiate(device):
+    model_download()
+    model = ResNet18().to(device)
+
+    checkpoint = torch.load(FILEPATH, map_location=device)
+    model.load_state_dict(checkpoint["param_state"])
+
+    model.eval()
+
+    def predict(img, batched=False):
+        with torch.no_grad():
+            img = normalize(img)
+            if not batched:
+                img = img.unsqueeze(0)
+            logits = model(img.to(device))
+            return logits
+
+    return predict 

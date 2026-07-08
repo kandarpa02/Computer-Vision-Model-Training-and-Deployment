@@ -1,9 +1,8 @@
-import torch
-from torch.utils.data import Dataset
-import numpy as np
 import os
 import gdown
-import torch.nn.functional as F
+import numpy as np
+import torch
+from torch.utils.data import Dataset
 from torchvision import transforms
 
 
@@ -20,26 +19,16 @@ def cifar_download():
         gdown.download(URL, FILEPATH, quiet=False)
 
 
-MEAN = [0.4914, 0.4822, 0.4465]
-STD  = [0.2470, 0.2435, 0.2616]
+MEAN = (0.4914, 0.4822, 0.4465)
+STD  = (0.2470, 0.2435, 0.2616)
 
 
-# -----------------------------
-# TRAIN TRANSFORMS (DeiT style)
-# -----------------------------
 train_tf = transforms.Compose([
     transforms.RandAugment(num_ops=2, magnitude=9),
-
-    transforms.ToTensor(),
     transforms.Normalize(MEAN, STD),
 ])
 
-
-# -----------------------------
-# TEST TRANSFORMS
-# -----------------------------
 test_tf = transforms.Compose([
-    transforms.ToTensor(),
     transforms.Normalize(MEAN, STD),
 ])
 
@@ -59,28 +48,21 @@ class cifar10(Dataset):
         if len(split) == 1:
             self.images = images[:n0]
             self.labels = labels[:n0]
+        elif part == 0:
+            self.images = images[:n0]
+            self.labels = labels[:n0]
         else:
-            if part == 0:
-                self.images = images[:n0]
-                self.labels = labels[:n0]
-            else:
-                self.images = images[n0:]
-                self.labels = labels[n0:]
+            self.images = images[n0:]
+            self.labels = labels[n0:]
 
     def __len__(self):
         return len(self.images)
 
     def __getitem__(self, idx):
-        img = self.images[idx]
-        label = self.labels[idx]
+        img = torch.from_numpy(self.images[idx]).float()
 
-        # -------------------------
-        # FORCE CORRECT FORMAT
-        # -------------------------
-        img = torch.from_numpy(img)
-
-        if img.shape[-1] == 3:  
-            img = img.permute(2, 0, 1)
+        # CHW, float32, 0-255  ->  CHW, float32, 0-1
+        img /= 255.0
 
         assert img.shape == (3, 32, 32), f"Bad shape: {img.shape}"
 
@@ -89,4 +71,6 @@ class cifar10(Dataset):
         else:
             img = test_tf(img)
 
-        return img, torch.tensor(label, dtype=torch.long)
+        label = torch.as_tensor(self.labels[idx], dtype=torch.long)
+
+        return img, label
