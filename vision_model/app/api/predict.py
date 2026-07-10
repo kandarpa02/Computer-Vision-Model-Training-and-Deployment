@@ -46,7 +46,6 @@ def model_initiate(device):
     def predict(images):
         with torch.no_grad():
 
-            # Single image
             if not isinstance(images, list):
                 images = [images]
 
@@ -57,4 +56,4 @@ def model_initiate(device):
             logits = model(batch)
             return logits
 
-    return predict
+    return predict 
