@@ -7,4 +7,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD sh -c "uvicorn vision_model.app.main:app --host 0.0.0.0 --port ${PORT:-8000}"
+CMD sh -c "uvicorn vision_api.app.main:app --host 0.0.0.0 --port ${PORT:-8000}"
